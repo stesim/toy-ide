@@ -1,0 +1,14 @@
+{
+  "name": "TOY IDE",
+  "short_name": "TOY IDE",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#002b36",
+  "theme_color": "#002b36",
+  "orientation": "portrait-primary",
+  "icons": [{
+    "src": "apple-touch-icon.png",
+    "type": "image/png",
+    "sizes": "180x180"
+  }]
+}

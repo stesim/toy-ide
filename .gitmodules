@@ -1,0 +1,3 @@
+[submodule "pwa-base"]
+	path = pwa-base
+	url = git@github.com:stesim/pwa-base.git
