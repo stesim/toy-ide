@@ -9,7 +9,7 @@ export default class EditableToken extends Component {
       className: undefined,
     });
 
-    this.onContentChanged = undefined;
+    this.onBeforeContentChange = undefined;
     this._preEditValue = undefined;
   }
 
@@ -50,27 +50,27 @@ export default class EditableToken extends Component {
 
   _beginEdit() {
     this._preEditValue = this.variables.textContent.value;
-    this.variables.isEditable.value = true;
+    this.variables.isEditable.set(true);
   }
 
   _endEdit(newContent) {
-    this.variables.isEditable.value = false;
-    if (this.onContentChanged && newContent !== this._preEditValue) {
-      if (this.onContentChanged(newContent)) {
-        this.variables.textContent.value = newContent;
+    this.variables.isEditable.set(false);
+    if (this.onBeforeContentChange && newContent !== this._preEditValue) {
+      if (this.onBeforeContentChange(newContent, this._preEditValue)) {
+        this.variables.textContent.set(newContent);
       } else {
         this._cancelEdit()
       }
     } else {
-      this.variables.textContent.value = newContent;
+      this.variables.textContent.set(newContent);
     }
     this._preEditValue = undefined;
   }
 
   _cancelEdit() {
-    this.variables.isEditable.value = false;
-    this.variables.textContent.value = undefined;
-    this.variables.textContent.value = this._preEditValue;
+    this.variables.isEditable.set(false);
+    this.variables.textContent.set(undefined);
+    this.variables.textContent.set(this._preEditValue);
     this._preEditValue = undefined;
   }
 }

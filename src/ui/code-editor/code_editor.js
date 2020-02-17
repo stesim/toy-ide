@@ -2,22 +2,63 @@ import Component from '../../../pwa-base/component.js';
 import render from '../../../pwa-base/render.js';
 import ComponentStyle from '../../../pwa-base/component_style.js';
 import VariableDeclaration from './variable_declaration.js';
+import mapVariable from '../../../pwa-base/map_variable.js';
+import { addDataStoreListener, removeDataStoreListener } from '../../../pwa-base/data_store.js';
 
 const style = new ComponentStyle();
 
 export default class CodeEditor extends Component {
-  constructor() {
-    super();
+  constructor(dataStore, controllerCommunication) {
+    super({
+      scopeVariables: {...dataStore.variables},
+    });
+
+    this._data = dataStore;
+    this._comm = controllerCommunication;
+
+    this._variableListener = this._onVariableChanged.bind(this);
+    addDataStoreListener(
+      this._data.variables,
+      this._variableListener);
   }
 
   $render() {
     return render({
       type: 'div',
       className: style.className('code-editor'),
-      children: [
-        {type: VariableDeclaration, isConst: true, name: 'foo', initialValue: 'Hello, world!', typeName: 'string'},
-      ],
+      children: mapVariable(
+        this.variables.scopeVariables,
+        variables => this._createVariableChildren(variables)),
     });
+  }
+
+  $detach() {
+    removeDataStoreListener(
+      this._data.variables,
+      this._variableListener);
+  }
+
+  _onVariableChanged(key, value) {
+    this.variables.scopeVariables.set(
+      {...this._data.variables});
+  }
+
+  _createVariableChildren(variables) {
+    return Object.entries(variables).map(([id, variable]) => ({
+      type: VariableDeclaration,
+      isConst: variable.const,
+      name: variable.name,
+      typeName: variable.type,
+      initialValue: variable.initialValue,
+      onBeforeNameChange: (newName, currentName) => {
+        this._comm.publish({type: 'rename-variable', variableId: id, newName});
+        return false;
+      },
+      onBeforeInitialValueChange: (newValue, currentValue) => {
+        this._comm.publish({type: 'change-variable-initial-value', variableId: id, newValue});
+        return false;
+      },
+    }));
   }
 }
 

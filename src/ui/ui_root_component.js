@@ -6,30 +6,17 @@ import CodeEditor from './code-editor/code_editor.js';
 export default class UiRootComponent extends Component {
   constructor(dataStore, controllerCommunication) {
     super({
-      numClicks: dataStore.numClicks,
+      editorVariables: {...dataStore.data.variables},
     });
 
     this._data = dataStore;
-    this._storeListener = this._onDataStoreChanged.bind(this);
-    addDataStoreListener(this._data, this._storeListener);
-
     this._comm = controllerCommunication;
-  }
-
-  _onDataStoreChanged(key, value) {
-    if (key === 'numClicks') {
-      this._setVariable(key, value);
-    }
-  }
-
-  $detach() {
-    removeDataStoreListener(this._data, this._storeListener);
   }
 
   $render() {
     return render(
       {type: 'div', children: [
-        {type: CodeEditor},
+        new CodeEditor(this._data.data, this._comm),
       ]}
     );
   }

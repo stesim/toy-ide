@@ -11,9 +11,12 @@ export default class VariableDeclaration extends Component {
     super({
       isConst: false,
       name: '',
-      initialValue: undefined,
       typeName: typeof undefined,
+      initialValue: undefined,
     });
+
+    this.onBeforeNameChange = undefined;
+    this.onBeforeInitialValueChange = undefined;
   }
 
   $render() {
@@ -22,17 +25,18 @@ export default class VariableDeclaration extends Component {
       children: [{
         type: 'span',
         className: style.className('declarator'),
-        textContent: mapVariable(
-          this.variables.isConst,
-          isConst => isConst ? 'const ' : 'let '),
+        textContent: 'let ',
       }, {
         type: EditableToken,
         className: style.className('identifier'),
         textContent: this.variables.name,
+        onBeforeContentChange: this.onBeforeNameChange,
       }, {
         type: 'span',
         className: style.className('operator'),
-        textContent: ' = ',
+        textContent: mapVariable(
+          this.variables.isConst,
+          isConst => isConst ? ' :: ' : ' := '),
       }, {
         type: EditableToken,
         className: mapVariable(
@@ -41,10 +45,7 @@ export default class VariableDeclaration extends Component {
         textContent: mapVariable(
           this.variables.initialValue,
           value => valueToString(value)),
-      }, {
-        type: 'span',
-        className: style.className('type-annotation'),
-        textContent: ' : ',
+        onBeforeContentChange: this.onBeforeInitialValueChange,
       }, {
         type: 'span',
         className: style.className('type-annotation'),
@@ -99,7 +100,27 @@ style.addRules(`
     color: var(--solarized-orange);
   }
   `, `
+  .string-literal::before {
+    content: '"';
+  }
+  `, `
+  .string-literal::after {
+    content: '"';
+  }
+  `, `
+  .number-literal {
+    color: var(--solarized-green);
+  }
+  `, `
+  .other-literal {
+    color: var(--solarized-blue);
+  }
+  `, `
   .type-annotation {
     color: var(--solarized-base01);
+  }
+  `, `
+  .type-annotation::before {
+    content: ' : ';
   }
 `);

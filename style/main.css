@@ -18,6 +18,10 @@
 
   --theme-background: var(--solarized-base03);
   --theme-foreground: var(--solarized-base0);
+  /*
+  --theme-background: var(--solarized-base3);
+  --theme-foreground: var(--solarized-base00);
+  */
 }
 
 html, body {
