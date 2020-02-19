@@ -38,6 +38,7 @@ export default class EditableToken extends Component {
             this._endEdit(evt.currentTarget.textContent);
           } else {
             this._beginEdit();
+            setInitialCursorPosition(evt.currentTarget);
           }
           evt.preventDefault();
         } else if (evt.key === 'Escape') {
@@ -49,6 +50,8 @@ export default class EditableToken extends Component {
   }
 
   _beginEdit() {
+
+
     this._preEditValue = this.variables.textContent.value;
     this.variables.isEditable.set(true);
   }
@@ -73,4 +76,14 @@ export default class EditableToken extends Component {
     this.variables.textContent.set(this._preEditValue);
     this._preEditValue = undefined;
   }
+}
+
+function setInitialCursorPosition(element) {
+  const range = document.createRange();
+  range.setStart(element, 0);
+  range.collapse(true);
+
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
 }

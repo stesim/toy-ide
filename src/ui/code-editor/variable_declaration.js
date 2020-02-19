@@ -22,6 +22,7 @@ export default class VariableDeclaration extends Component {
   $render() {
     return render({
       type: 'div',
+      tabIndex: 0,
       children: [{
         type: 'span',
         className: style.className('declarator'),
